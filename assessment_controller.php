@@ -4,8 +4,9 @@
 defined('EMONCMS_EXEC') or die('Restricted access');
 
 function assessment_controller() {
-    global $session, $route, $mysqli, $fullwidth;
+    global $session, $route, $mysqli, $fullwidth, $themecolor;
     $fullwidth = true;
+    $themecolor = "blue";
 
     /* --------------------------------------------------------------------------
       // Backwards compatibility:
