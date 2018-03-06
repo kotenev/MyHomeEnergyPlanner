@@ -344,7 +344,7 @@ global $reports;
         // Disable measures if master
         show_hide_if_master();
 
-        update();
+        update(false,false);
     });
 
 
@@ -395,10 +395,8 @@ global $reports;
         show_hide_if_master();
     });
 
-    function update(undo_redo = false)
+    function update(undo_redo = false, reload_menu = true)
     {
-        console.log("updating");
-
         // We need to calculate the periods of heating off here because if we try to do it in household.js it happens after the update
         if (project.master.household != undefined) {
             for (var s in project) { // we ensure all the scenarios have the same household data and heating off periods
@@ -422,7 +420,7 @@ global $reports;
 
         $("." + scenario + "_scenario_emissions").html(project[scenario].kgco2perm2.toFixed(0));
         
-        add_scenarios_to_menu();
+        if (reload_menu) add_scenarios_to_menu();
 
         openbem.set(projectid, project, function (result) {
             alertifnotlogged(result);
@@ -580,16 +578,20 @@ global $reports;
             console.log(key + " changed from " + lastval + " to " + val);
             changelog += key + " changed from " + lastval + " to " + val + "<br>";
         }
-        update();
+        update(false,false);
     });
 
     // Scenarios menu interactions
-    $("#openbem").on('click', ".scenario-block", function () {
-        var s = $(this).attr('scenario');
+    $("#openbem").on('click', ".block-header", function () {
+    
+        var s = $(this).parent().attr('scenario');
         //  if (s != scenario) {
         window.location = '#' + s + '/' + page;
+        
+        var menu_content = $(this).parent().find(".menu-content");
+        var visible = menu_content.is(":visible");
         $(".menu-content").hide();
-        $(this).find(".menu-content").show();
+        if (!visible) menu_content.show();
         /*
          data = project[scenario];
          load_view("#content", page);
